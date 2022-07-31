@@ -10,17 +10,19 @@ class AgoraServer {
       BaseOptions(
           baseUrl: 'http://192.168.1.7:8082/',
           receiveDataWhenStatusError: true,
-          connectTimeout: 20*1000,
+          connectTimeout: 20 * 1000,
           headers: {
             'Content-Type': "application/json",
           }),
     );
   }
 
-  static Future<Response> getToken({required String receiverId}){
-    return dio!.post("fetch_rtc_token",data: {
-      'channelName':"$uId$receiverId",
+  static Future<Response> getToken({
+    required String receiverId,
+    required String callType,
+  }) {
+    return dio!.post("fetch_rtc_token", data: {
+      'channelName': "$uId$receiverId$callType",
     });
   }
-
 }

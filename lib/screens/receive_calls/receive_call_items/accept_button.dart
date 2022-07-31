@@ -1,3 +1,6 @@
+import 'package:chat/cubit/app/app_cubit.dart';
+import 'package:chat/models/UserModel.dart';
+import 'package:chat/screens/call_content/video_call/video_call_content_screen.dart';
 import 'package:chat/screens/call_content/voice_call/voice_call_content_screen.dart';
 import 'package:chat/shared/colors.dart';
 import 'package:chat/styles/icons_broken.dart';
@@ -7,6 +10,7 @@ import 'package:sizer/sizer.dart';
 
 class AcceptButton extends StatelessWidget {
   final String senderID;
+  final String senderPhone;
   final String token;
   final String channelName;
   final String callID;
@@ -17,24 +21,41 @@ class AcceptButton extends StatelessWidget {
       required this.token,
       required this.channelName,
       required this.callID,
-      required this.callType})
+      required this.callType,
+      required this.senderPhone})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    UserModel? sender = AppCubit.get(context)
+        .users
+        .firstWhereOrNull((element) => element.uId == senderID);
+
+    String senderName = sender == null ? senderPhone : sender.name!;
+
     return Column(
       children: [
         FloatingActionButton(
           heroTag: "accept",
           onPressed: () {
             // cubit.updateInCallStatus(isTrue: true);
-            Get.off(() => CallContentScreen(
-                  // receiverID: null,
-                  senderID: senderID,
-                  token: token,
-                  channelName: channelName,
-                  callID: callID,
-                ));
+            if (callType == 'voice') {
+              Get.off(() => VoiceCallContentScreen(
+                    // receiverID: null,
+                    senderID: senderID,
+                    token: token,
+                    channelName: channelName,
+                    callID: callID,
+                    friendName: senderName,
+                  ));
+            } else {
+              Get.off(() => VideoCallContentScreen(
+                    // receiverID: null,
+                    senderID: senderID,
+                    token: token,
+                    channelName: channelName,
+                  ));
+            }
             // _engine.leaveChannel();
             // Get.back();
           },

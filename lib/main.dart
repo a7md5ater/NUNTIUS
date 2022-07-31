@@ -23,7 +23,6 @@ import 'cubit/app/bloc_observer.dart';
 import 'firebase_options.dart';
 import 'services/notifications/local_notifications.dart';
 
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -42,38 +41,46 @@ void main() async {
   tz.initializeTimeZones();
   final String defaultLocale = Platform.localeName.substring(0, 2);
   defaultLang = defaultLocale;
-  lang = GetStorage().read('lang')??(defaultLang=='ar'?'ar':'en');
-  uId = GetStorage().read('uId')??"";
-  contactsPermission = GetStorage().read('contactsPermission')??false;
+  lang = GetStorage().read('lang') ?? (defaultLang == 'ar' ? 'ar' : 'en');
+  uId = GetStorage().read('uId') ?? "";
+  contactsPermission = GetStorage().read('contactsPermission') ?? false;
   Widget? homeWidget;
   debugPrint("============>${uId!}");
-  if(uId!.isNotEmpty){
-    homeWidget=const HomeScreen();
-  }else{
-    homeWidget=const LoginScreen();
+  if (uId!.isNotEmpty) {
+    homeWidget = const HomeScreen();
+  } else {
+    homeWidget = const LoginScreen();
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   String? token = await FirebaseMessaging.instance.getToken();
   debugPrint("======>$token");
 
-
   NotificationsHelper.init();
 
   BlocOverrides.runZoned(
-        () {runApp(MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (BuildContext context)=>AppCubit()..getContacts()..getUserData(isOpening: true,updateInCall: true),
-              ),
-              BlocProvider(create: (BuildContext context)=>LoginCubit(),),
-            ],
-            child: BlocConsumer<AppCubit,AppStates>(
-              listener: (context,state){},
-                builder: (context,state){
-                return MyApp(homeWidget: homeWidget!,cubit: AppCubit.get(context),);
-                },
-            )));},
+    () {
+      runApp(MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (BuildContext context) => AppCubit()
+                ..getContacts()
+                ..getUserData(isOpening: true, updateInCall: true),
+            ),
+            BlocProvider(
+              create: (BuildContext context) => LoginCubit(),
+            ),
+          ],
+          child: BlocConsumer<AppCubit, AppStates>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return MyApp(
+                homeWidget: homeWidget!,
+                cubit: AppCubit.get(context),
+              );
+            },
+          )));
+    },
     blocObserver: MyBlocObserver(),
   );
 
@@ -81,22 +88,19 @@ void main() async {
   //     enabled: !kReleaseMode,
   //     builder: (context) => MyApp(homeWidget: homeWidget!,), // Wrap your app
   //   ));
-
-
 }
 
 class MyApp extends StatefulWidget {
   final Widget homeWidget;
   final AppCubit cubit;
-  const MyApp({Key? key, required this.homeWidget, required this.cubit}) : super(key: key);
+  const MyApp({Key? key, required this.homeWidget, required this.cubit})
+      : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
-
   @override
   void initState() {
     super.initState();
@@ -113,9 +117,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AppCubit,AppStates>(
-      listener: (context,state){},
-      builder: (context,state){
+    return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           useInheritedMediaQuery: true,

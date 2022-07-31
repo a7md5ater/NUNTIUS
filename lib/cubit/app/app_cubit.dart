@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:chat/screens/call_content/video_call/video_call_content_screen.dart';
 import 'package:chat/services/agora/agora_server.dart';
 import 'package:chat/models/CallModel.dart';
 import 'package:chat/models/LastMessageModel.dart';
@@ -1116,7 +1117,8 @@ class AppCubit extends Cubit<AppStates> {
     required String friendCallStatus,
   }) {
     emit(AppGenerateChannelTokenLoadingState());
-    AgoraServer.getToken(receiverId: receiverId).then((value) {
+    AgoraServer.getToken(receiverId: receiverId, callType: callType)
+        .then((value) {
       setCallData(
           friendID: receiverId,
           callType: callType,
@@ -1178,6 +1180,12 @@ class AppCubit extends Cubit<AppStates> {
   }) {
     // emit(AppSetCallDataLoadingState());
 
+    UserModel? friend =
+        users.firstWhereOrNull((element) => element.uId == friendID);
+
+    String friendName = friend == null ? friendPhone : friend.name!;
+    String friendImage = friend == null ? "" : friend.image!;
+
     CallModel myCallModel = CallModel(
         userID: friendID,
         phoneNumber: friendPhone,
@@ -1215,13 +1223,25 @@ class AppCubit extends Cubit<AppStates> {
               receiverID: friendID,
               callType: callType);
         }
-        Get.to(() => CallContentScreen(
+        if (callType == 'voice') {
+          Get.to(() => VoiceCallContentScreen(
+                senderID: uId!,
+                token: channelToken,
+                channelName: "$uId$friendID$callType",
+                friendName: friendName,
+                callID: callID,
+              ));
+        } else {
+          Get.to(
+            () => VideoCallContentScreen(
+              channelName: "$uId$friendID$callType",
               senderID: uId!,
+              friendImage: friendImage,
+              friendName: friendName,
               token: channelToken,
-              channelName: "$uId$friendID",
-              // receiverID: friendID,
-              callID: callID,
-            ));
+            ),
+          );
+        }
         // generateChannelToken(
         //     receiverId: friendID,
         //     userToken: userToken,
@@ -1297,5 +1317,33 @@ class AppCubit extends Cubit<AppStates> {
       printError("getCallsData", error.toString());
       emit(AppErrorState());
     });
+  }
+
+  List<LastMessageModel> lastMessages = [];
+  void testChats(AsyncSnapshot<QuerySnapshot> snapshot) {
+    lastMessages = [];
+    chats = [];
+    if (snapshot.hasData) {
+      for (int i = 0; i < snapshot.data!.size; i++) {
+        var element = snapshot.data!.docs[i];
+        lastMessages.add(LastMessageModel.fromJson(element.data()));
+
+        ///here i get chat user details and check that
+        ///if my chat with him is already exist in my account i get that chat details from chats list in my cubit
+        ///if it isn't i will get my chats and it will be in them
+        UserModel? userModel =
+            chats.firstWhereOrNull((user) => user.uId == element.id);
+        if (userModel == null) {
+          getChats(firstMessage: true);
+          debugPrint("GET YASTA");
+          // chats.add(cubit.chats.firstWhere((user) => user.uId==element.id));
+        } else {
+          chats.add(chats.firstWhere((user) => user.uId == element.id));
+        }
+        // }
+      }
+      lastMessages = lastMessages.reversed.toList();
+      chats = chats.reversed.toList();
+    }
   }
 }

@@ -29,15 +29,14 @@ class ChatsScreen extends StatefulWidget {
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
-
-  ActionPane swipeToDelete({
-    required BuildContext context,
-    required String chatID,
-    double rightPadding = 0 ,
-    double leftPadding = 0
-  }){
+  ActionPane swipeToDelete(
+      {required BuildContext context,
+      required String chatID,
+      double rightPadding = 0,
+      double leftPadding = 0}) {
     return ActionPane(
-      motion: const ScrollMotion().marginOnly(left: leftPadding,right: rightPadding),
+      motion: const ScrollMotion()
+          .marginOnly(left: leftPadding, right: rightPadding),
       dismissible: DismissiblePane(onDismissed: () {
         print("ASD");
       }),
@@ -58,8 +57,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   @override
-  Widget build(BuildContext context){
-
+  Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {

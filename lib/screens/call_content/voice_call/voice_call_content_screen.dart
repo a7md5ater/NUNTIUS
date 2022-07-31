@@ -17,26 +17,26 @@ import 'package:sizer/sizer.dart';
 
 /// Define App ID and Token
 
-class CallContentScreen extends StatefulWidget {
+class VoiceCallContentScreen extends StatefulWidget {
   final String senderID;
-  // final String? receiverID;
+  final String friendName;
   final String callID;
   final String token;
   final String channelName;
-  const CallContentScreen({
-    Key? key,
-    required this.senderID,
-    required this.token,
-    required this.channelName,
-    required this.callID,
-    // required this.receiverID
-  }) : super(key: key);
+  const VoiceCallContentScreen(
+      {Key? key,
+      required this.senderID,
+      required this.token,
+      required this.channelName,
+      required this.callID,
+      required this.friendName})
+      : super(key: key);
 
   @override
-  State<CallContentScreen> createState() => _CallContentScreenState();
+  State<VoiceCallContentScreen> createState() => _VoiceCallContentScreenState();
 }
 
-class _CallContentScreenState extends State<CallContentScreen> {
+class _VoiceCallContentScreenState extends State<VoiceCallContentScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   late int _remoteUid = 0;
@@ -123,7 +123,7 @@ class _CallContentScreenState extends State<CallContentScreen> {
                     SizedBox(
                       height: 5.h,
                     ),
-                    const CallContentFriendName(name: "Ahmed Khater"),
+                    CallContentFriendName(name: widget.friendName),
                     SizedBox(
                       height: 1.h,
                     ),
@@ -138,7 +138,6 @@ class _CallContentScreenState extends State<CallContentScreen> {
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 cubit.updateInCallStatus(isTrue: false);
-                Get.back();
               },
               backgroundColor: Colors.red,
               child: const Icon(

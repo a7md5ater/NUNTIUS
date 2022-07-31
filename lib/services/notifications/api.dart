@@ -58,7 +58,7 @@ class DioHelper {
         "type": callType,
         "callID": callID,
         "token": channelToken,
-        "channelName": "$uId$receiverID",
+        "channelName": "$uId$receiverID$callType",
         "senderID": "$uId",
         "phoneNumber": myPhoneNumber,
         "click_action": "FLUTTER_NOTIFICATION_CLICK"

@@ -18,6 +18,7 @@ import 'package:sizer/sizer.dart';
 
 class ReceiveCallScreen extends StatefulWidget {
   final String senderID;
+  final String senderPhone;
   final String callID;
   final String callType;
   final String token;
@@ -29,6 +30,7 @@ class ReceiveCallScreen extends StatefulWidget {
     required this.channelName,
     required this.callID,
     required this.callType,
+    required this.senderPhone,
   }) : super(key: key);
 
   @override
@@ -100,6 +102,7 @@ class _ReceiveCallScreenState extends State<ReceiveCallScreen> {
                         CancelButton(cubit: cubit, callType: widget.callType),
                         AcceptButton(
                             senderID: widget.senderID,
+                            senderPhone: widget.senderPhone,
                             token: widget.token,
                             channelName: widget.channelName,
                             callID: widget.callID,

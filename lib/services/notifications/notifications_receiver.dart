@@ -21,6 +21,7 @@ class NotificationsReceiver {
       if (message.data['type'] != "message") {
         Get.to(() => ReceiveCallScreen(
               senderID: message.data['senderID'],
+              senderPhone: message.data['phoneNumber'],
               token: message.data['token'],
               channelName: message.data['channelName'],
               callID: message.data['callID'],
